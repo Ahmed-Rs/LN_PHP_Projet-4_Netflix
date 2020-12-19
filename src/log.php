@@ -10,15 +10,15 @@
 
 		// EXISTE UN ET UN SEUL COMPTE DONT SECRET CORRESPOND A $SECRET ?
 		$req = $db->prepare('SELECT COUNT(*)
-							 AS x
+							 AS numberAccount
 			    			 FROM user
 			    			 WHERE secret = ?');
 
 		$req->execute(array($secret));
 
-		while ($data = $req->fetch()) {
+		while ($user = $req->fetch()) {
 			
-			if ($data['x'] == 1) {
+			if ($user['numberAccount'] == 1) {
 				
 				// RECUPERE TOUTES SES INFORMATIONS
 				$reqUser = $db->prepare('SELECT *
@@ -28,7 +28,7 @@
 				$reqUser->execute(array($secret));
 
 				while ($userAccount = $reqUser->fetch()) {
-				
+
 					$_SESSION['connect'] = 1;
 					$_SESSION['email']	 = $userAccount['email'];
 
@@ -37,6 +37,30 @@
 			}
 		}
 
+	}
+
+	if (isset($_SESSION['connect'])) {
+
+		require('src/connect.php');
+
+// RECUPERE TOUTES SES INFORMATIONS
+		$reqUser = $db->prepare('SELECT *
+								 FROM user
+								 WHERE email = ?');
+
+		$reqUser->execute(array($_SESSION['email']));
+
+		while ($userAccount = $reqUser->fetch()) {
+
+			if ($userAccount['blocked'] == 1) {
+					header('location: ../logout.php');
+					exit();
+			}
+
+			$_SESSION['connect'] = 1;
+			$_SESSION['email']	 = $userAccount['email'];
+
+		}
 	}
 
 ?>

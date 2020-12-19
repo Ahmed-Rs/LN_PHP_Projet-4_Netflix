@@ -49,7 +49,7 @@
 
 		while ($data = $req->fetch()) {
 			
-			if ($password == $data['password']) {
+			if ($password == $data['password'] && $data['bloqued'] == 0) {
 				
 				$_SESSION['connect'] = 1;
 				$_SESSION['email']	 = $data['email'];
@@ -68,11 +68,7 @@
 			}
 		}
 
-
 	}
-
-
-
 
 
 ?>
